@@ -1,0 +1,22 @@
+[
+  {
+    id:"6253282",
+    "name":"Twitter API",
+    "screen_name":"twitterapi",
+    "url":"http://dev.twitter.com",
+    "followers_count":1004641,
+    "friends_count":33,
+    "favourites_count":24,
+    "statuses_count":3277
+  },
+  {
+    id:"15082387",
+    "name":"Sanaulla",
+    "screen_name":"sanaulla",
+    "url":"http://blog.sanaulla.info",
+    "followers_count":241,
+    "friends_count":302,
+    "favourites_count":41,
+    "statuses_count":1876
+  }
+]
