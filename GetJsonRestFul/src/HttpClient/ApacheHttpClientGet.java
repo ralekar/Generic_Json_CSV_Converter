@@ -32,7 +32,7 @@ public class ApacheHttpClientGet implements ActionListener{
 	private FileWriter fileWriter;
 	public ApacheHttpClientGet(String filename)throws IOException
 	{
-		startFlag=false;
+		/*startFlag=false;
 		panelHttpGet=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		labelHttpGet=new JLabel("Web Link:");
 		textHttpGet=new JTextField(15);
@@ -48,26 +48,19 @@ public class ApacheHttpClientGet implements ActionListener{
 		frameHttpGet.setTitle("My frame");
 		frameHttpGet.setSize(500,400);
 		frameHttpGet.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frameHttpGet.setVisible(true);
+		frameHttpGet.setVisible(true);*/
 		fileWriter=new FileWriter(filename);
 		
 	}
 	public static void main(String[] args) throws IOException 
 	{
 		
-		ApacheHttpClientGet apacheGet=new ApacheHttpClientGet("Pubs.json");
-		while(startFlag!=false)
-		apacheGet.httpGetRestful();
-	}
+		
 	
-	
-	
-	public void httpGetRestful()
-	{
 		try {
 
 			
-			
+			ApacheHttpClientGet apacheGet=new ApacheHttpClientGet("testPubs.json");
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			
 			  //https://inpho.cogs.indiana.edu/journal.json
@@ -88,12 +81,12 @@ public class ApacheHttpClientGet implements ActionListener{
 			System.out.println("Output from Server .... \n");
 			while ((output = br.readLine()) != null) {
 
-				this.fileWriter.append(output);
+				apacheGet.fileWriter.append(output);
                 
 			}
 			
-			this.fileWriter.flush();
-			this.fileWriter.close();
+			apacheGet.fileWriter.flush();
+			apacheGet.fileWriter.close();
 			
 
 			httpClient.getConnectionManager().shutdown();

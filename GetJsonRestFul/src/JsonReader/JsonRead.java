@@ -13,10 +13,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class JsonRead {
 
@@ -29,23 +32,24 @@ public class JsonRead {
     private String superKey;
 	private static String primaryKey;
     private Map<String,String> mapPrimitive;
-	private static boolean firstRowFlag;
-	
+    private static boolean firstRowFlag;
 	private String filename;
-	
+	private CSVWriter csvJsonWriter;
 	
 	public JsonRead(String jsonSource, boolean sourceFromFile) throws IOException{
 		
 		this.jsonSource = jsonSource;
 		this.sourceFromFile = sourceFromFile;
-		this.filename="rrr.csv";
+		this.filename="FINALJOURNAL.csv";
 		this.createCSVFile();
-		primaryKey="volume";
+		primaryKey="url";
 		arrayKey="";
 		arrayValue="";
 		superKey="";
 		firstRowFlag=false;
-		mapPrimitive=new HashMap<String,String>();
+		mapPrimitive=new LinkedHashMap<String,String>();
+		
+		
 		
 	}
 	
@@ -53,7 +57,8 @@ public class JsonRead {
 	{
 		
 		try{
-			JsonRead jsonParserDemo =new JsonRead("temppubs.json",true);
+			JsonRead jsonParserDemo =new JsonRead("FinalJournal.json",true);
+			
 			@SuppressWarnings("unused")
 			Gson jsonGson = new Gson();
 			JsonReader jsonReader = jsonParserDemo.getJsonReader();
@@ -98,7 +103,7 @@ public class JsonRead {
 					}
 					else
 					{
-						arrayValue+=data.toString()+"|";
+						arrayValue+=data.toString().trim()+"|";
 					}
 
 				}
@@ -127,24 +132,24 @@ public class JsonRead {
 				{
                     csvFileWriter(mapPrimitive);	
 					mapPrimitive.clear();
-					mapPrimitive.put(incomingString,jsonValue);
+					mapPrimitive.put(incomingString,jsonValue.trim());
 					firstRowFlag=true;
 
 				}
 				if(!incomingString.equalsIgnoreCase(superKey+"_"+primaryKey))
 				{
 					String value=mapPrimitive.get(incomingString);
-					value+="|"+jsonValue;
-					mapPrimitive.put(incomingString, value);
+					value+="|"+jsonValue.trim();
+					mapPrimitive.put(incomingString, value.trim());
 				}
 			}
 			else
 			{
 				
-				mapPrimitive.put(superKey+"_"+jsonKey, jsonValue);
+				mapPrimitive.put(superKey+"_"+jsonKey, jsonValue.trim());
 			}
 
-		  
+		
 	}	
 		
 	public void csvFileWriter(Map<String,String>mapJsonPrimitive) throws IOException
@@ -152,44 +157,33 @@ public class JsonRead {
 		
 	  if(!firstRowFlag)
 	  {
+		 String [] columns=new String[mapJsonPrimitive.size()+1];
+		 int index=0;
 		 for(Entry<String,String>pair:mapJsonPrimitive.entrySet())
 		 {
-			 this.fileWriter.append(pair.getKey()+" ,");
+			 
+			 String col=pair.getKey().trim();
+			 columns[index]=col;
+			 index++;
 			 
 		 }
-		 this.fileWriter.append("\n");
-		 for(Entry<String,String>pair:mapJsonPrimitive.entrySet())
-		 {
-			  String value;
-			  if(pair.getValue().isEmpty()||pair.getValue().equalsIgnoreCase("\"\""))
-				 value="null";
-			  else
-				  value=pair.getValue();
-			  
-			  this.fileWriter.append(value+" ,");
-			 
-		 }
-		 this.fileWriter.append("\n");
-		 
+		 this.csvJsonWriter.writeNext(columns);
 	  }
 	  else
 	  {
-		
-		  for(Entry<String,String>pair:mapJsonPrimitive.entrySet())
+		  String[] listJsonValues=new String[mapJsonPrimitive.entrySet().size()+1];
+			int index=0;
+			for(Entry<String,String>pair:mapJsonPrimitive.entrySet())
 			 {
-			  String value;
-			  if(pair.getValue().isEmpty()||pair.getValue().equalsIgnoreCase("\"\""))
-				  value="null";
-			  else
-				  value=pair.getValue();
-			  
-			  this.fileWriter.append(value+" ,");
-				 
+				String newPair=pair.getValue().trim();
+			    listJsonValues[index]=newPair;
+			    index++;
+			    
+				
 			 }
-			 this.fileWriter.append("\n");
-			
+			this.csvJsonWriter.writeNext(listJsonValues);
 	  }
-	  
+
 	}
 	
 	
@@ -205,6 +199,7 @@ public class JsonRead {
 		try {
 			
 			this.fileWriter=new FileWriter(this.filename);
+		    this.csvJsonWriter=new CSVWriter(fileWriter);
 			
 		} catch (IOException e) {
 
